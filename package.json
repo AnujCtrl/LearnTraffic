@@ -22,16 +22,16 @@
     "format:check": "prettier . --check",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "precommit": "lint-staged",
-    "lint-staged": {
-      "*.{ts}": [
-        "eslint --fix",
-        "prettier --write"
-      ],
-      "*.{js,json,md,yml,yaml}": [
-        "prettier --write"
-      ]
-    },
     "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
