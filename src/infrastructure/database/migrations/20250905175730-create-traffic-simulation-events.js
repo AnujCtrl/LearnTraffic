@@ -1,4 +1,3 @@
-'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -8,59 +7,54 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    //     buildings (id, type, x, y, capacity, zone_type) -- home/office/commercial
-    // districts (id, name, bounds, traffic_density_modifier)
-    await queryInterface.createTable('districts', {
+    // traffic_metrics(
+    //   id,
+    //   road_id,
+    //   timestamp,
+    //   vehicle_count,
+    //   average_speed,
+    //   congestion_level,
+    // );
+    // simulation_events(id, event_type, data, timestamp);
+    await queryInterface.createTable('traffic_metrics', {
       id: {
         type: Sequelize.UUIDV4,
         defaultValue: Sequelize.literal('uuid_generate_v4()'),
         allowNull: false,
         primaryKey: true,
       },
-      name: {
-        type: Sequelize.STRING,
+      road_id: {
+        type: Sequelize.UUIDV4,
+        allowNull: false,
+        references: {
+          model: 'roads',
+          key: 'id',
+        },
+      },
+      timestamp: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      vehicle_count: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
-      traffic_density_modifier: {
+      average_speed: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      congestion_level: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
     });
-
-    await queryInterface.createTable('buildings', {
+    await queryInterface.createTable('simulation_events', {
       id: {
         type: Sequelize.UUIDV4,
         defaultValue: Sequelize.literal('uuid_generate_v4()'),
         allowNull: false,
         primaryKey: true,
-      },
-      type: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      x: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      y: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      capacity: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      zone_type: {
-        type: Sequelize.ENUM('home', 'office', 'commercial'),
-        allowNull: false,
-      },
-      district: {
-        type: Sequelize.UUIDV4,
-        allowNull: false,
-        references: {
-          model: 'district',
-          key: 'id',
-        },
       },
     });
   },
@@ -72,7 +66,7 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('buildings');
-    await queryInterface.dropTable('districts');
+    await queryInterface.dropTable('traffic_metrics');
+    await queryInterface.dropTable('simulation_events');
   },
 };

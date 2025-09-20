@@ -1,0 +1,10 @@
+export const APP_CONSTANTS = {
+  DEFAULT_PORT: 3000,
+  API_PREFIX: 'api',
+  API_VERSION: 'v1',
+} as const;
+
+export const DATABASE_CONSTANTS = {
+  CONNECTION_RETRY_ATTEMPTS: 5,
+  CONNECTION_RETRY_DELAY: 3000,
+} as const;

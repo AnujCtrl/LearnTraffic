@@ -1,5 +1,3 @@
-'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -9,100 +7,41 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    // vehicles(
-    //   id,
-    //   type,
-    //   start_building_id,
-    //   destination_building_id,
-    //   current_road_id,
-    //   speed,
-    //   created_at,
-    // );
-    // vehicle_positions(id, vehicle_id, x, y, timestamp, road_id);
-    // routes(id, vehicle_id, planned_path, current_step, created_at);
-    await queryInterface.createTable('vehicles', {
+    //     roads (id, start_intersection_id, end_intersection_id, length, lanes, speed_limit, created_at)
+    // intersections (id, x, y, type, created_at
+    // traffic_lights (id, intersection_id, state, cycle_duration, current_phase)
+    await queryInterface.createTable('intersectionTypes', {
       id: {
-        type: Sequelize.UUIDV4,
-        defaultValue: Sequelize.literal('uuid_generate_v4()'),
-        allowNull: false,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
+        allowNull: false,
       },
-      type: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      start_building_id: {
-        type: Sequelize.UUIDV4,
-        allowNull: false,
-        references: {
-          model: 'buildings',
-          key: 'id',
-        },
-      },
-      destination_building_id: {
-        type: Sequelize.UUIDV4,
-        allowNull: false,
-        references: {
-          model: 'buildings',
-          key: 'id',
-        },
-      },
-      current_road_id: {
-        type: Sequelize.UUIDV4,
-        allowNull: false,
-        references: {
-          model: 'roads',
-          key: 'id',
-        },
-      },
-      speed: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
-      createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
     });
-    await queryInterface.createTable('vehicle_positions', {
+    await queryInterface.createTable('intersections', {
       id: {
         type: Sequelize.UUIDV4,
         defaultValue: Sequelize.literal('uuid_generate_v4()'),
         allowNull: false,
         primaryKey: true,
       },
-      vehicle_id: {
-        type: Sequelize.UUIDV4,
-        allowNull: false,
-        references: {
-          model: 'vehicles',
-          key: 'id',
-        },
-      },
-      total_percentage_complete: {
+      x: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      current_road_percentage_complete: {
+      y: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      timestamp: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
-      road_id: {
-        type: Sequelize.UUIDV4,
+      type: {
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'roads',
+          model: 'intersectionTypes',
           key: 'id',
         },
       },
@@ -117,26 +56,38 @@ module.exports = {
         defaultValue: Sequelize.NOW,
       },
     });
-    await queryInterface.createTable('routes', {
+    await queryInterface.createTable('roads', {
       id: {
         type: Sequelize.UUIDV4,
         defaultValue: Sequelize.literal('uuid_generate_v4()'),
         allowNull: false,
         primaryKey: true,
       },
-      vehicle_id: {
+      start_intersection_id: {
         type: Sequelize.UUIDV4,
         allowNull: false,
         references: {
-          model: 'vehicles',
+          model: 'intersections',
           key: 'id',
         },
       },
-      planned_path: {
-        type: Sequelize.JSONB,
+      end_intersection_id: {
+        type: Sequelize.UUIDV4,
+        allowNull: false,
+        references: {
+          model: 'intersections',
+          key: 'id',
+        },
+      },
+      length: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
-      current_step: {
+      lanes: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      speed_limit: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -149,6 +100,31 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW,
+      },
+    });
+    await queryInterface.createTable('traffic_lights', {
+      id: {
+        type: Sequelize.UUIDV4,
+        defaultValue: Sequelize.literal('uuid_generate_v4()'),
+        allowNull: false,
+        primaryKey: true,
+      },
+      intersection_id: {
+        type: Sequelize.UUIDV4,
+        allowNull: false,
+        references: {
+          model: 'intersections',
+          key: 'id',
+        },
+      },
+      state: {
+        type: Sequelize.ENUM('red', 'yellow', 'green'),
+        allowNull: 'false',
+      },
+      cycle_duration: {
+        type: Sequelize.INTEGER,
+        defaultValue: 5,
+        allowNull: false,
       },
     });
   },
@@ -160,8 +136,9 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.dropTable('routes');
-    await queryInterface.dropTable('vehicle_positions');
-    await queryInterface.dropTable('vehicles');
+    await queryInterface.dropTable('traffic_lights');
+    await queryInterface.dropTable('roads');
+    await queryInterface.dropTable('intersections');
+    await queryInterface.dropTable('intersectionTypes');
   },
 };

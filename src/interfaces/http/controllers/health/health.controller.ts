@@ -1,6 +1,6 @@
+import type { HealthService } from '@application/services/health.service';
 import { Controller, Get } from '@nestjs/common';
-import { HealthService } from './health.service';
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 @Controller()
 export class HealthController {
