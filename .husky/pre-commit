@@ -1,2 +1,2 @@
-pnpm test
-pnpm run precommit
+npx pnpm test
+npx pnpm run precommit
